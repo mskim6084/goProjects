@@ -37,11 +37,17 @@ func main() {
 	requestURL := fmt.Sprintf("http://localhost:%d?id=1234", serverPort)
 	req, err := http.NewRequest(http.MethodPost, requestURL, bodyReader)
 	if err != nil {
-		fmt.Printf("client: Could not create request: 5s\n", err)
+		fmt.Printf("client: Could not create request: %s\n", err)
 		os.Exit(1)
 	}
 
-	res, err := http.DefaultClient.Do(req)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	res, err := client.Do(req)
 	if err != nil {
 		fmt.Printf("error making http request: %s\n", err)
 		os.Exit(1)
@@ -75,4 +81,5 @@ func handleHttp(response http.ResponseWriter, request *http.Request) {
 
 
 	fmt.Fprintf(response, `{"message": "hello!"}`)
+	//time.Sleep(35 * time.Second)
 }
